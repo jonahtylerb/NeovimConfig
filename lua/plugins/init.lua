@@ -4,6 +4,7 @@ require("nvim-treesitter.install").compilers = { "clang" }
 return {
   {
     "marko-cerovac/material.nvim",
+    event = "VeryLazy",
     opts = {
       lualine_style = "stealth",
       contrast = {
@@ -12,13 +13,38 @@ return {
         floating_windows = true,
         cursor_line = true,
       },
+      disable = {
+        background = true,
+      },
     },
+  },
+
+  {
+    "xiyaowong/nvim-transparent",
+    event = "VeryLazy",
+    opts = { enable = false },
+  },
+
+  {
+    "Everblush/nvim",
+    name = "everblush",
+    event = "VeryLazy",
+  },
+
+  {
+    "CantoroMC/ayu-nvim",
+    event = "VeryLazy",
+  },
+
+  {
+    "Th3Whit3Wolf/one-nvim",
+    event = "VeryLazy",
   },
 
   {
     "LazyVim/LazyVim",
     opts = {
-      colorscheme = "material",
+      colorscheme = "ayu",
     },
   },
 
@@ -60,6 +86,7 @@ return {
       },
     },
   },
+
   {
     "echasnovski/mini.indentscope",
     opts = {
@@ -70,34 +97,90 @@ return {
   },
 
   {
-    "cljoly/telescope-repo.nvim",
+    "folke/persistence.nvim",
+    enabled = false,
+  },
+
+  {
+    "olimorris/persisted.nvim",
     event = "VeryLazy",
     config = function()
-      require("telescope").load_extension("repo")
+      require("persisted").setup()
+      require("telescope").load_extension("persisted")
     end,
   },
 
   {
     "mg979/vim-visual-multi",
-    event = "BufNewFile",
+    event = "VeryLazy",
   },
 
   {
     "tenxsoydev/karen-yank.nvim",
-    event = "BufNewFile",
+    event = "VeryLazy",
+    opts = {},
+  },
+
+  {
+    "max397574/better-escape.nvim",
+    event = "VeryLazy",
     opts = {},
   },
 
   {
     "ggandor/leap-spooky.nvim",
-    event = "BufNewFile",
+    event = "VeryLazy",
     opts = {
       paste_on_remote_yank = true,
     },
   },
 
   {
+    "stevearc/oil.nvim",
+    opts = {},
+    event = "VeryLazy",
+  },
+
+  { "echasnovski/mini.pairs", enabled = false },
+
+  {
+    "echasnovski/mini.align",
+    event = "VeryLazy",
+    config = function()
+      require("mini.align").setup()
+    end,
+  },
+
+  {
+    "echasnovski/mini.splitjoin",
+    event = "VeryLazy",
+    config = function()
+      require("mini.splitjoin").setup()
+    end,
+  },
+
+  {
+    "altermo/npairs-integrate-upair",
+    dependencies = { "windwp/nvim-autopairs", "altermo/ultimate-autopair.nvim" },
+    event = "VeryLazy",
+    opts = {},
+  },
+
+  {
     "Exafunction/codeium.vim",
+    event = "VeryLazy",
+    config = function()
+      vim.keymap.set("i", "<tab>", vim.fn["codeium#Accept"], { expr = true })
+      vim.keymap.set("i", "<c-down>", function()
+        return vim.fn["codeium#CycleCompletions"](1)
+      end, { expr = true })
+      vim.keymap.set("i", "<c-up>", function()
+        return vim.fn["codeium#CycleCompletions"](-1)
+      end, { expr = true })
+      vim.keymap.set("i", "<c-x>", function()
+        return vim.fn["codeium#Clear"]()
+      end, { expr = true })
+    end,
   },
 
   {
@@ -111,30 +194,20 @@ return {
     "hrsh7th/nvim-cmp",
     ---@param opts cmp.ConfigSchema
     opts = function(_, opts)
-      local has_words_before = function()
-        unpack = unpack or table.unpack
-        local line, col = unpack(vim.api.nvim_win_get_cursor(0))
-        return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
-      end
-
       local luasnip = require("luasnip")
       local cmp = require("cmp")
 
       opts.mapping = vim.tbl_extend("force", opts.mapping, {
-        ["<Tab>"] = cmp.mapping(function(fallback)
+        ["<down>"] = cmp.mapping(function(fallback)
           if cmp.visible() then
             cmp.select_next_item()
-          -- You could replace the expand_or_jumpable() calls with expand_or_locally_jumpable()
-          -- they way you will only jump inside the snippet region
           elseif luasnip.expand_or_jumpable() then
             luasnip.expand_or_jump()
-          elseif has_words_before() then
-            cmp.complete()
           else
             fallback()
           end
         end, { "i", "s" }),
-        ["<S-Tab>"] = cmp.mapping(function(fallback)
+        ["<up>"] = cmp.mapping(function(fallback)
           if cmp.visible() then
             cmp.select_prev_item()
           elseif luasnip.jumpable(-1) then
@@ -167,6 +240,7 @@ return {
       items = {
         new_section("Find file",    "Telescope find_files", "Telescope"),
         new_section("Recent files", "Telescope oldfiles",   "Telescope"),
+        new_section("Open Session", "Telescope persisted", "Telescope"),
         new_section("Grep text",    "Telescope live_grep",  "Telescope"),
         new_section("init.lua",     "e $MYVIMRC",           "Config"),
         new_section("Lazy",         "Lazy",                 "Config"),
@@ -214,17 +288,19 @@ return {
   },
 
   {
-    "akinsho/bufferline.nvim",
+    "nvim-lualine/lualine.nvim",
+    event = "VeryLazy",
     opts = {
-      options = {
-        separator_style = "slant",
+      sections = {
+        lualine_b = { "branch" },
+        lualine_c = { "diagnostics" },
       },
     },
   },
 
   {
     "gen740/SmoothCursor.nvim",
-    event = "BufNewFile",
+    event = "VeryLazy",
     opts = {
       autostart = true,
       cursor = "",
@@ -256,6 +332,30 @@ return {
     opts = function(_, opts)
       local nls = require("null-ls")
       table.insert(opts.sources, nls.builtins.formatting.prettierd)
+    end,
+  },
+
+  {
+    "akinsho/toggleterm.nvim",
+    event = "VeryLazy",
+    opts = function()
+      local opts = { noremap = true, silent = true }
+      vim.keymap.set("n", "<Leader>td", ':TermExec cmd="pnpm dev" open=0<cr>', opts)
+      vim.keymap.set("n", "<Leader>th", ':TermExec cmd="pnpm dev --host" open=0<cr>', opts)
+      vim.keymap.set("n", "<Leader>tb", ':TermExec cmd="pnpm build"<cr>', opts)
+      vim.keymap.set("n", "<Leader>tp", ':TermExec cmd="pnpm preview" open=0<cr>', opts)
+      return {
+        open_mapping = [[<c-\>]],
+        hide_numbers = true,
+        shade_terminals = true,
+        shading_factor = -100,
+        persist_mode = true,
+        direction = "float",
+        auto_scroll = true,
+        float_opts = {
+          border = "curved",
+        },
+      }
     end,
   },
 }
