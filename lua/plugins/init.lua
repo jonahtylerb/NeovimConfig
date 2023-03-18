@@ -1,5 +1,8 @@
 require("nvim-treesitter.install").prefer_git = false
 require("nvim-treesitter.install").compilers = { "clang" }
+require("notify").setup({
+  background_colour = "#000000",
+})
 
 return {
   {
@@ -21,8 +24,7 @@ return {
 
   {
     "xiyaowong/nvim-transparent",
-    event = "VeryLazy",
-    opts = { enable = false },
+    opts = { enable = true },
   },
 
   {
@@ -102,6 +104,15 @@ return {
   },
 
   {
+    "ckolkey/ts-node-action",
+    dependencies = { "nvim-treesitter" },
+    event = "VeryLazy",
+    config = function()
+      vim.keymap.set("n", "T", require("ts-node-action").node_action, { desc = "Toggle ts-node-action" })
+    end,
+  },
+
+  {
     "olimorris/persisted.nvim",
     event = "VeryLazy",
     config = function()
@@ -111,8 +122,108 @@ return {
   },
 
   {
-    "mg979/vim-visual-multi",
+    "debugloop/telescope-undo.nvim",
     event = "VeryLazy",
+    config = function()
+      require("telescope").load_extension("undo")
+      vim.keymap.set("n", "<leader>su", ":Telescope undo<cr>", { desc = "Undo" })
+    end,
+  },
+
+  {
+    "chentoast/marks.nvim",
+    event = "VeryLazy",
+    opts = {
+      default_mappings = true,
+      builtin_marks = { ".", "<", ">", "^" },
+      cyclic = true,
+      force_write_shada = false,
+      refresh_interval = 250,
+      sign_priority = { lower = 1000, upper = 1005, builtin = 1008, bookmark = 1020 },
+    },
+  },
+
+  {
+    "echasnovski/mini.animate",
+    event = "VeryLazy",
+    opts = function()
+      local mouse_scrolled = false
+      for _, scroll in ipairs({ "Up", "Down" }) do
+        local key = "<ScrollWheel" .. scroll .. ">"
+        vim.keymap.set({ "", "i" }, key, function()
+          mouse_scrolled = true
+          return key
+        end, { expr = true })
+      end
+
+      local animate = require("mini.animate")
+      return {
+        resize = {
+          timing = animate.gen_timing.linear({ duration = 100, unit = "total" }),
+        },
+        cursor = {
+          enable = false,
+        },
+        scroll = {
+          timing = animate.gen_timing.linear({ duration = 150, unit = "total" }),
+          subscroll = animate.gen_subscroll.equal({
+            predicate = function(total_scroll)
+              if mouse_scrolled then
+                mouse_scrolled = false
+                return false
+              end
+              return total_scroll > 1
+            end,
+          }),
+        },
+      }
+    end,
+    config = function(_, opts)
+      require("mini.animate").setup(opts)
+    end,
+  },
+
+  {
+    "ThePrimeagen/refactoring.nvim",
+    dependencies = {
+      { "nvim-lua/plenary.nvim" },
+      { "nvim-treesitter/nvim-treesitter" },
+    },
+    event = "VeryLazy",
+    config = function()
+      require("refactoring").setup()
+      require("telescope").load_extension("refactoring")
+      vim.api.nvim_set_keymap(
+        "v",
+        "<leader>rr",
+        "<Esc><cmd>lua require('telescope').extensions.refactoring.refactors()<CR>",
+        { noremap = true, desc = "Refactor" }
+      )
+      vim.api.nvim_set_keymap(
+        "n",
+        "<leader>rp",
+        ":lua require('refactoring').debug.printf({below = false})<CR>",
+        { noremap = true, desc = "Refactor Print" }
+      )
+      vim.api.nvim_set_keymap(
+        "n",
+        "<leader>rv",
+        ":lua require('refactoring').debug.print_var({ normal = true })<CR>",
+        { noremap = true, desc = "Refactor Print Var" }
+      )
+      vim.api.nvim_set_keymap(
+        "v",
+        "<leader>rv",
+        ":lua require('refactoring').debug.print_var({})<CR>",
+        { noremap = true, desc = "Refactor Print Var" }
+      )
+      vim.api.nvim_set_keymap(
+        "n",
+        "<leader>rc",
+        ":lua require('refactoring').debug.cleanup({})<CR>",
+        { noremap = true, desc = "Refactor Cleanup" }
+      )
+    end,
   },
 
   {
