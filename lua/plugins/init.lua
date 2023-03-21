@@ -6,29 +6,57 @@ require("notify").setup({
 
 return {
   {
-    "marko-cerovac/material.nvim",
+    "mawkler/modicator.nvim",
+    dependencies = "CantoroMC/ayu-nvim",
+    opts = function()
+      vim.o.cursorline = true
+      vim.o.number = true
+      vim.o.termguicolors = true
+      local colors = {
+        blue = "#36a3d9",
+        green = "#b8cc52",
+        orange = "#ff7733",
+        yellow = "#e7c547",
+      }
+      return {
+        highlights = {
+          modes = {
+            ["n"] = {
+              foreground = colors.green,
+            },
+            ["i"] = {
+              foreground = colors.blue,
+            },
+            ["v"] = {
+              foreground = colors.yellow,
+            },
+            ["V"] = {
+              foreground = colors.yellow,
+            },
+            ["�"] = {
+              foreground = colors.yellow,
+            },
+            ["s"] = {
+              foreground = colors.yellow,
+            },
+            ["S"] = {
+              foreground = colors.yellow,
+            },
+            ["R"] = {
+              foreground = colors.orange,
+            },
+            ["c"] = {
+              foreground = colors.orange,
+            },
+          },
+        },
+      }
+    end,
     event = "VeryLazy",
-    opts = {
-      lualine_style = "stealth",
-      contrast = {
-        terminal = true,
-        sidebars = true,
-        floating_windows = true,
-        cursor_line = true,
-      },
-      disable = {
-        background = true,
-      },
-    },
   },
 
   {
     "xiyaowong/nvim-transparent",
-  },
-
-  {
-    "CantoroMC/ayu-nvim",
-    event = "VeryLazy",
   },
 
   {
@@ -89,6 +117,19 @@ return {
   {
     "folke/persistence.nvim",
     enabled = false,
+  },
+
+  {
+    "eandrju/cellular-automaton.nvim",
+    event = "VeryLazy",
+    config = function()
+      vim.keymap.set(
+        "n",
+        "<leader><cr>",
+        ":CellularAutomaton make_it_rain<CR>",
+        { desc = "Make it rain!", noremap = true, silent = true }
+      )
+    end,
   },
 
   {
