@@ -24,22 +24,10 @@ return {
 
   {
     "xiyaowong/nvim-transparent",
-    opts = { enable = true },
-  },
-
-  {
-    "Everblush/nvim",
-    name = "everblush",
-    event = "VeryLazy",
   },
 
   {
     "CantoroMC/ayu-nvim",
-    event = "VeryLazy",
-  },
-
-  {
-    "Th3Whit3Wolf/one-nvim",
     event = "VeryLazy",
   },
 
