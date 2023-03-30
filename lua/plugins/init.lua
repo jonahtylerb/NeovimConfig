@@ -3,6 +3,12 @@ require("nvim-treesitter.install").compilers = { "clang" }
 require("notify").setup({
   background_colour = "#000000",
 })
+require("lspconfig").unocss.setup({
+  filetypes = { "html", "tsx", "js", "ts", "astro" },
+  root_dir = function(fname)
+    return require("lspconfig.util").root_pattern("unocss.config.ts")(fname)
+  end,
+})
 
 return {
   {
@@ -106,6 +112,19 @@ return {
   },
 
   {
+    "nvim-tree/nvim-web-devicons",
+    config = function()
+      require("nvim-web-devicons").set_icon({
+        astro = {
+          icon = "A",
+          color = "#ff5d01",
+          name = "astro",
+        },
+      })
+    end,
+  },
+
+  {
     "echasnovski/mini.indentscope",
     opts = {
       draw = {
@@ -117,6 +136,43 @@ return {
   {
     "folke/persistence.nvim",
     enabled = false,
+  },
+
+  {
+    "chrisgrieser/nvim-various-textobjs",
+    event = "VeryLazy",
+    opts = {
+      useDefaultKeymaps = true,
+    },
+  },
+
+  {
+    "nullchilly/fsread.nvim",
+    event = "VeryLazy",
+  },
+
+  {
+    "chrisgrieser/nvim-spider",
+    event = "VeryLazy",
+    config = function()
+      vim.keymap.set({ "n", "o", "x" }, "w", function()
+        require("spider").motion("w")
+      end, { desc = "Spider-w" })
+      vim.keymap.set({ "n", "o", "x" }, "e", function()
+        require("spider").motion("e")
+      end, { desc = "Spider-e" })
+      vim.keymap.set({ "n", "o", "x" }, "b", function()
+        require("spider").motion("b")
+      end, { desc = "Spider-b" })
+      vim.keymap.set({ "n", "o", "x" }, "ge", function()
+        require("spider").motion("ge")
+      end, { desc = "Spider-ge" })
+    end,
+  },
+
+  {
+    "cpea2506/relative-toggle.nvim",
+    event = "VeryLazy",
   },
 
   {
