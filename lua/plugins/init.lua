@@ -1,19 +1,38 @@
-require("nvim-treesitter.install").prefer_git = false
-require("nvim-treesitter.install").compilers = { "clang" }
 require("notify").setup({
   background_colour = "#000000",
-})
-require("lspconfig").unocss.setup({
-  filetypes = { "html", "tsx", "js", "ts", "astro" },
-  root_dir = function(fname)
-    return require("lspconfig.util").root_pattern("unocss.config.ts")(fname)
-  end,
+  top_down = false,
 })
 
+require("lspconfig").unocss.setup({
+        filetypes = { "html", "tsx", "js", "ts", "astro", "svelte" },
+        root_dir = function(fname)
+          return require("lspconfig.util").root_pattern("unocss.config.ts")(fname)
+        end,
+      })
 return {
+  {
+    "nvim-treesitter/nvim-treesitter",
+    opts = function(_, opts)
+      vim.list_extend(opts.ensure_installed, {
+        "tsx",
+        "typescript",
+        "html",
+        "svelte",
+        "astro",
+        "javascript",
+        "css",
+        "json",
+        "markdown",
+        "markdown_inline",
+      })
+    end,
+  },
+
+
   {
     "mawkler/modicator.nvim",
     dependencies = "CantoroMC/ayu-nvim",
+    event = "VeryLazy",
     opts = function()
       vim.o.cursorline = true
       vim.o.number = true
@@ -58,7 +77,6 @@ return {
         },
       }
     end,
-    event = "VeryLazy",
   },
 
   {
@@ -73,24 +91,6 @@ return {
   },
 
   {
-    "nvim-treesitter/nvim-treesitter",
-    opts = function(_, opts)
-      vim.list_extend(opts.ensure_installed, {
-        "tsx",
-        "typescript",
-        "html",
-        "svelte",
-        "astro",
-        "javascript",
-        "css",
-        "json",
-        "markdown",
-        "markdown_inline",
-      })
-    end,
-  },
-
-  {
     "williamboman/mason.nvim",
     opts = {
       ensure_installed = {
@@ -98,11 +98,11 @@ return {
         "shellcheck",
         "astro-language-server",
         "css-lsp",
-        "emmet-ls",
         "html-lsp",
         "json-lsp",
         "lua-language-server",
         "prettierd",
+        "eslint_d",
         "shfmt",
         "stylua",
         "typescript-language-server",
@@ -149,25 +149,6 @@ return {
   {
     "nullchilly/fsread.nvim",
     event = "VeryLazy",
-  },
-
-  {
-    "chrisgrieser/nvim-spider",
-    event = "VeryLazy",
-    config = function()
-      vim.keymap.set({ "n", "o", "x" }, "w", function()
-        require("spider").motion("w")
-      end, { desc = "Spider-w" })
-      vim.keymap.set({ "n", "o", "x" }, "e", function()
-        require("spider").motion("e")
-      end, { desc = "Spider-e" })
-      vim.keymap.set({ "n", "o", "x" }, "b", function()
-        require("spider").motion("b")
-      end, { desc = "Spider-b" })
-      vim.keymap.set({ "n", "o", "x" }, "ge", function()
-        require("spider").motion("ge")
-      end, { desc = "Spider-ge" })
-    end,
   },
 
   {
@@ -320,7 +301,35 @@ return {
   {
     "max397574/better-escape.nvim",
     event = "VeryLazy",
-    opts = {},
+    opts = {
+      mapping = {
+        "jk",
+        "jj",
+        "kj",
+        "kk",
+      },
+    },
+  },
+
+  {
+    "AckslD/muren.nvim",
+    event = "VeryLazy",
+    config = true,
+  },
+
+  {
+    "samodostal/image.nvim",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "m00qek/baleia.nvim",
+    },
+    event = "VeryLazy",
+    opts = {
+      render = {
+        foreground_color = true,
+        background_color = true,
+      },
+    },
   },
 
   {
@@ -358,6 +367,12 @@ return {
   {
     "altermo/npairs-integrate-upair",
     dependencies = { "windwp/nvim-autopairs", "altermo/ultimate-autopair.nvim" },
+    event = "VeryLazy",
+    opts = {},
+  },
+
+  {
+    "windwp/nvim-ts-autotag",
     event = "VeryLazy",
     opts = {},
   },
@@ -553,5 +568,12 @@ return {
         },
       }
     end,
+  },
+
+  {
+    "chomosuke/term-edit.nvim",
+    ft = "toggleterm",
+    event = "VeryLazy",
+    version = "1.*",
   },
 }
