@@ -4,11 +4,11 @@ require("notify").setup({
 })
 
 require("lspconfig").unocss.setup({
-        filetypes = { "html", "tsx", "js", "ts", "astro", "svelte" },
-        root_dir = function(fname)
-          return require("lspconfig.util").root_pattern("unocss.config.ts")(fname)
-        end,
-      })
+  filetypes = { "html", "tsx", "js", "ts", "astro", "svelte" },
+  root_dir = function(fname)
+    return require("lspconfig.util").root_pattern("unocss.config.ts")(fname)
+  end,
+})
 return {
   {
     "nvim-treesitter/nvim-treesitter",
@@ -27,7 +27,6 @@ return {
       })
     end,
   },
-
 
   {
     "mawkler/modicator.nvim",
@@ -496,6 +495,42 @@ return {
         end,
       })
     end,
+  },
+  {
+    "nvim-neo-tree/neo-tree.nvim",
+    opts = {
+      filesystem = {
+        bind_to_cwd = false,
+        follow_current_file = true,
+        use_libuv_file_watcher = true,
+      },
+      window = {
+        mappings = {
+          ["<space>"] = "none",
+        },
+      },
+      default_component_configs = {
+        indent = {
+          with_expanders = true, -- if nil and file nesting is enabled, will enable expanders
+          expander_collapsed = "",
+          expander_expanded = "",
+          expander_highlight = "NeoTreeExpander",
+        },
+        symbols = {
+          -- Change type
+          added = "✚",
+          deleted = "󰧧",
+          modified = "󰙏",
+          renamed = "󱇨",
+          -- Status type
+          untracked = "",
+          ignored = "",
+          unstaged = "",
+          staged = "",
+          conflict = "",
+        },
+      },
+    },
   },
 
   {
