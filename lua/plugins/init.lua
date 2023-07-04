@@ -115,7 +115,7 @@ return {
     config = function()
       require("nvim-web-devicons").set_icon({
         astro = {
-          icon = "A",
+          icon = "",
           color = "#ff5d01",
           name = "astro",
         },
@@ -156,19 +156,6 @@ return {
   },
 
   {
-    "eandrju/cellular-automaton.nvim",
-    event = "VeryLazy",
-    config = function()
-      vim.keymap.set(
-        "n",
-        "<leader><cr>",
-        ":CellularAutomaton make_it_rain<CR>",
-        { desc = "Make it rain!", noremap = true, silent = true }
-      )
-    end,
-  },
-
-  {
     "ckolkey/ts-node-action",
     dependencies = { "nvim-treesitter" },
     event = "VeryLazy",
@@ -183,15 +170,6 @@ return {
     config = function()
       require("persisted").setup()
       require("telescope").load_extension("persisted")
-    end,
-  },
-
-  {
-    "debugloop/telescope-undo.nvim",
-    event = "VeryLazy",
-    config = function()
-      require("telescope").load_extension("undo")
-      vim.keymap.set("n", "<leader>su", ":Telescope undo<cr>", { desc = "Undo" })
     end,
   },
 
@@ -348,14 +326,6 @@ return {
   { "echasnovski/mini.pairs", enabled = false },
 
   {
-    "echasnovski/mini.align",
-    event = "VeryLazy",
-    config = function()
-      require("mini.align").setup()
-    end,
-  },
-
-  {
     "echasnovski/mini.splitjoin",
     event = "VeryLazy",
     config = function()
@@ -406,6 +376,21 @@ return {
     opts = function(_, opts)
       local luasnip = require("luasnip")
       local cmp = require("cmp")
+
+      opts.window = {
+        completion = cmp.config.window.bordered(),
+        documentation = cmp.config.window.bordered(),
+      }
+
+      opts.formatting = {
+        format = function(_, item)
+          local icons = require("lazyvim.config").icons.kinds
+          if icons[item.kind] then
+            item.kind = icons[item.kind]
+          end
+          return item
+        end,
+      }
 
       opts.mapping = vim.tbl_extend("force", opts.mapping, {
         ["<down>"] = cmp.mapping(function(fallback)
@@ -503,6 +488,10 @@ return {
         bind_to_cwd = false,
         follow_current_file = true,
         use_libuv_file_watcher = true,
+        hide_gitignored = true,
+        hide_by_name = {
+          "node_modules",
+        },
       },
       window = {
         mappings = {
@@ -511,7 +500,7 @@ return {
       },
       default_component_configs = {
         indent = {
-          with_expanders = true, -- if nil and file nesting is enabled, will enable expanders
+          with_expanders = true,
           expander_collapsed = "",
           expander_expanded = "",
           expander_highlight = "NeoTreeExpander",
@@ -557,7 +546,7 @@ return {
         enable = true,
         head = { cursor = "▷", texthl = "SmoothCursor", linehl = nil },
         body = {
-          { cursor = "", texthl = "SmoothCursorRed" },
+          { cursor = "•", texthl = "SmoothCursorRed" },
           { cursor = "•", texthl = "SmoothCursorOrange" },
           { cursor = "•", texthl = "SmoothCursorOrange" },
           { cursor = ".", texthl = "SmoothCursorYellow" },
@@ -604,11 +593,13 @@ return {
       }
     end,
   },
-
   {
-    "chomosuke/term-edit.nvim",
-    ft = "toggleterm",
+    "axkirillov/hbac.nvim",
     event = "VeryLazy",
-    version = "1.*",
+    dependencies = {
+      "nvim-telescope/telescope.nvim",
+      "nvim-lua/plenary.nvim",
+      "nvim-tree/nvim-web-devicons",
+    },
   },
 }
