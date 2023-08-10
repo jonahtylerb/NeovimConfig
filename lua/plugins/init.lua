@@ -19,7 +19,6 @@ return {
         "html",
         "svelte",
         "astro",
-        "javascript",
         "css",
         "json",
         "markdown",
@@ -273,19 +272,6 @@ return {
     "tenxsoydev/karen-yank.nvim",
     event = "VeryLazy",
     opts = {},
-  },
-
-  {
-    "max397574/better-escape.nvim",
-    event = "VeryLazy",
-    opts = {
-      mapping = {
-        "jk",
-        "jj",
-        "kj",
-        "kk",
-      },
-    },
   },
 
   {
