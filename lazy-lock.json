@@ -83,4 +83,3 @@
   "vim-startuptime": { "branch": "master", "commit": "5ddaf24df23f4d151970987c1322eaa247f08e69" },
   "which-key.nvim": { "branch": "main", "commit": "38b990f6eabf62014018b4aae70a97d7a6c2eb88" },
   "zen-mode.nvim": { "branch": "main", "commit": "68f554702de63f4b7b6b6d4bcb10178f41a0acc7" }
-}
