@@ -1,6 +1,6 @@
 # My current Neovim Config
 
-![Neovim](./assets/neovim.png)
+![Neovim](https://github.com/jonahtylerb/NeovimConfig/blob/main/assets/Screenshot.png)
 
 ## WIP
 
