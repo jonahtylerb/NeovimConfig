@@ -281,21 +281,6 @@ return {
   },
 
   {
-    "samodostal/image.nvim",
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-      "m00qek/baleia.nvim",
-    },
-    event = "VeryLazy",
-    opts = {
-      render = {
-        foreground_color = true,
-        background_color = true,
-      },
-    },
-  },
-
-  {
     "ggandor/leap-spooky.nvim",
     event = "VeryLazy",
     opts = {

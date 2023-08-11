@@ -26,6 +26,7 @@
   "image.nvim": { "branch": "main", "commit": "dcabdf47b0b974b61d08eeafa2c519927e37cf27" },
   "indent-blankline.nvim": { "branch": "master", "commit": "4541d690816cb99a7fc248f1486aa87f3abce91c" },
   "karen-yank.nvim": { "branch": "main", "commit": "817f50c9464ce557c8f7f8f4d4c8d2f7b81fc40c" },
+  "kitty-runner.nvim": { "branch": "main", "commit": "143f9f97a92347ca61a07d1b3c27449bc6591478" },
   "lazy.nvim": { "branch": "main", "commit": "3ad55ae678876516156cca2f361c51f7952a924b" },
   "leap-spooky.nvim": { "branch": "main", "commit": "e003f2aa376190148f2e7731a60c89239335013c" },
   "lualine.nvim": { "branch": "master", "commit": "45e27ca739c7be6c49e5496d14fcf45a303c3a63" },
