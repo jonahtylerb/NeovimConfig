@@ -1,15 +1,11 @@
-require("notify").setup({
-  background_colour = "#000000",
-  top_down = false,
-})
-
-require("lspconfig").unocss.setup({
-  filetypes = { "html", "tsx", "js", "ts", "astro", "svelte" },
-  root_dir = function(fname)
-    return require("lspconfig.util").root_pattern("unocss.config.ts")(fname)
-  end,
-})
 return {
+  {
+    "rcarriga/nvim-notify",
+    opts = {
+      background_colour = "#000000",
+      top_down = false,
+    },
+  },
 
   {
     "mawkler/modicator.nvim",
@@ -208,12 +204,14 @@ return {
   },
 
   {
-    "altermo/npairs-integrate-upair",
-    dependencies = { "windwp/nvim-autopairs", "altermo/ultimate-autopair.nvim" },
-    event = "InsertEnter",
-    config = true,
+    "altermo/ultimate-autopair.nvim",
+    event = { "InsertEnter", "CmdlineEnter" },
+    branch = "v0.6",
+    opts = {
+      --TODO:
+      --Config goes here
+    },
   },
-
   {
     "windwp/nvim-ts-autotag",
     event = "InsertEnter",
@@ -221,20 +219,8 @@ return {
   },
 
   {
-    "Exafunction/codeium.vim",
-    event = "InsertEnter",
-    config = function()
-      vim.keymap.set("i", "<tab>", vim.fn["codeium#Accept"], { expr = true })
-      vim.keymap.set("i", "<c-down>", function()
-        return vim.fn["codeium#CycleCompletions"](1)
-      end, { expr = true })
-      vim.keymap.set("i", "<c-up>", function()
-        return vim.fn["codeium#CycleCompletions"](-1)
-      end, { expr = true })
-      vim.keymap.set("i", "<c-x>", function()
-        return vim.fn["codeium#Clear"]()
-      end, { expr = true })
-    end,
+    "L3MON4D3/LuaSnip",
+    keys = {},
   },
 
   {
@@ -301,7 +287,7 @@ return {
       items = {
         new_section("Find file",    "Telescope find_files", "Telescope"),
         new_section("Recent files", "Telescope oldfiles",   "Telescope"),
-        new_section("Open Session", "Telescope qwwprojections","Telescope"),
+        new_section("Open Project", "Telescope projects","Telescope"),
         new_section("Grep text",    "Telescope live_grep",  "Telescope"),
         new_section("init.lua",     "e $MYVIMRC",           "Config"),
         new_section("Lazy",         "Lazy",                 "Config"),
@@ -309,7 +295,7 @@ return {
         new_section("Quit",         "qa",                   "Built-in"),
       },
       content_hooks = {
-        starter.gen_hook.adding_bullet(pad .. "░ ", false),
+        starter.gen_hook.adding_bullet(pad .. " ", false),
         starter.gen_hook.aligning("center", "center"),
       },
     }
@@ -480,6 +466,7 @@ return {
     "xiyaowong/nvim-transparent",
     event = "VimEnter",
   },
+
   {
     "uga-rosa/ccc.nvim",
     keys = {
@@ -561,7 +548,6 @@ return {
     "eandrju/cellular-automaton.nvim",
     keys = {
       {
-        "n",
         "<leader><cr>",
         ":CellularAutomaton make_it_rain<CR>",
         { desc = "Make it rain!", noremap = true, silent = true },
@@ -619,10 +605,7 @@ return {
 
   {
     "max397574/better-escape.nvim",
-    keys = {
-      "jk",
-      "kj",
-    },
+    event = "VeryLazy",
     opts = {
       mapping = {
         "jk",
@@ -639,6 +622,7 @@ return {
 
   {
     "samodostal/image.nvim",
+    event = "VeryLazy",
     opts = {
       render = {
         min_padding = 5,
@@ -726,12 +710,7 @@ return {
     },
   },
 
-  { "echasnovski/mini.operators", config = true },
-
-  {
-    "roobert/tabtree.nvim",
-    config = true,
-  },
+  { "echasnovski/mini.operators", config = true, event = "VeryLazy" },
 
   {
     "piersolenski/telescope-import.nvim",
@@ -746,6 +725,47 @@ return {
     dependencies = "nvim-telescope/telescope.nvim",
     config = function()
       require("telescope").load_extension("import")
+    end,
+  },
+
+  {
+    "ahmedkhalf/project.nvim",
+    opts = {},
+    event = "VeryLazy",
+    config = function(_, opts)
+      require("project_nvim").setup(opts)
+      require("telescope").load_extension("projects")
+    end,
+    keys = {
+      { "<leader>fp", "<Cmd>Telescope projects<CR>", desc = "Projects" },
+    },
+  },
+
+  {
+    "roobert/tabtree.nvim",
+    config = function()
+      require("tabtree").setup()
+    end,
+    event = "VeryLazy",
+  },
+
+  {
+    "Exafunction/codeium.vim",
+    event = "VeryLazy",
+    keys = {
+      "<Tab>",
+    },
+    config = function()
+      vim.keymap.set("i", "<Tab>", vim.fn["codeium#Accept"], { expr = true })
+      vim.keymap.set("i", "<c-down>", function()
+        return vim.fn["codeium#CycleCompletions"](1)
+      end, { expr = true })
+      vim.keymap.set("i", "<c-up>", function()
+        return vim.fn["codeium#CycleCompletions"](-1)
+      end, { expr = true })
+      vim.keymap.set("i", "<c-x>", function()
+        return vim.fn["codeium#Clear"]()
+      end, { expr = true })
     end,
   },
 }
