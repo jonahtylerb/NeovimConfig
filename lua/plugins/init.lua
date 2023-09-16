@@ -10,31 +10,12 @@ require("lspconfig").unocss.setup({
   end,
 })
 return {
-  {
-    "nvim-treesitter/nvim-treesitter",
-    opts = function(_, opts)
-      vim.list_extend(opts.ensure_installed, {
-        "tsx",
-        "typescript",
-        "html",
-        "svelte",
-        "astro",
-        "css",
-        "json",
-        "markdown",
-        "markdown_inline",
-      })
-    end,
-  },
 
   {
     "mawkler/modicator.nvim",
     dependencies = "CantoroMC/ayu-nvim",
     event = "VeryLazy",
     opts = function()
-      vim.o.cursorline = true
-      vim.o.number = true
-      vim.o.termguicolors = true
       local colors = {
         blue = "#36a3d9",
         green = "#b8cc52",
@@ -78,67 +59,8 @@ return {
   },
 
   {
-    "xiyaowong/nvim-transparent",
-  },
-
-  {
-    "LazyVim/LazyVim",
-    opts = {
-      colorscheme = "ayu",
-    },
-  },
-
-  {
-    "williamboman/mason.nvim",
-    opts = {
-      ensure_installed = {
-        "svelte-language-server",
-        "shellcheck",
-        "astro-language-server",
-        "css-lsp",
-        "html-lsp",
-        "json-lsp",
-        "lua-language-server",
-        "prettierd",
-        "eslint_d",
-        "shfmt",
-        "stylua",
-        "typescript-language-server",
-        "unocss-language-server",
-      },
-    },
-  },
-
-  {
-    "nvim-tree/nvim-web-devicons",
-    config = function()
-      require("nvim-web-devicons").set_icon({
-        astro = {
-          icon = "",
-          color = "#ff5d01",
-          name = "astro",
-        },
-      })
-    end,
-  },
-
-  {
-    "echasnovski/mini.indentscope",
-    opts = {
-      draw = {
-        animation = require("mini.indentscope").gen_animation.linear({ duration = 30, unit = "total" }),
-      },
-    },
-  },
-
-  {
-    "folke/persistence.nvim",
-    enabled = false,
-  },
-
-  {
     "chrisgrieser/nvim-various-textobjs",
-    event = "VeryLazy",
+    event = "BufRead",
     opts = {
       useDefaultKeymaps = true,
     },
@@ -146,7 +68,7 @@ return {
 
   {
     "nullchilly/fsread.nvim",
-    event = "VeryLazy",
+    cmd = "FSRead",
   },
 
   {
@@ -157,18 +79,9 @@ return {
   {
     "ckolkey/ts-node-action",
     dependencies = { "nvim-treesitter" },
-    event = "VeryLazy",
+    keys = "T",
     config = function()
       vim.keymap.set("n", "T", require("ts-node-action").node_action, { desc = "Toggle ts-node-action" })
-    end,
-  },
-
-  {
-    "olimorris/persisted.nvim",
-    event = "VeryLazy",
-    config = function()
-      require("persisted").setup()
-      require("telescope").load_extension("persisted")
     end,
   },
 
@@ -232,8 +145,8 @@ return {
       { "nvim-treesitter/nvim-treesitter" },
     },
     event = "VeryLazy",
+    opts = {},
     config = function()
-      require("refactoring").setup()
       require("telescope").load_extension("refactoring")
       vim.api.nvim_set_keymap(
         "v",
@@ -271,55 +184,45 @@ return {
   {
     "tenxsoydev/karen-yank.nvim",
     event = "VeryLazy",
-    opts = {},
-  },
-
-  {
-    "AckslD/muren.nvim",
-    event = "VeryLazy",
     config = true,
   },
 
   {
-    "ggandor/leap-spooky.nvim",
-    event = "VeryLazy",
-    opts = {
-      paste_on_remote_yank = true,
-    },
+    "AckslD/muren.nvim",
+    cmd = "MurenOpen",
+    config = true,
   },
 
   {
     "stevearc/oil.nvim",
-    opts = {},
-    event = "VeryLazy",
+    cmd = "Oil",
+    config = true,
   },
 
   { "echasnovski/mini.pairs", enabled = false },
 
   {
     "echasnovski/mini.splitjoin",
-    event = "VeryLazy",
-    config = function()
-      require("mini.splitjoin").setup()
-    end,
+    keys = "gS",
+    config = true,
   },
 
   {
     "altermo/npairs-integrate-upair",
     dependencies = { "windwp/nvim-autopairs", "altermo/ultimate-autopair.nvim" },
-    event = "VeryLazy",
-    opts = {},
+    event = "InsertEnter",
+    config = true,
   },
 
   {
     "windwp/nvim-ts-autotag",
-    event = "VeryLazy",
-    opts = {},
+    event = "InsertEnter",
+    config = true,
   },
 
   {
     "Exafunction/codeium.vim",
-    event = "VeryLazy",
+    event = "InsertEnter",
     config = function()
       vim.keymap.set("i", "<tab>", vim.fn["codeium#Accept"], { expr = true })
       vim.keymap.set("i", "<c-down>", function()
@@ -335,15 +238,7 @@ return {
   },
 
   {
-    "L3MON4D3/LuaSnip",
-    keys = function()
-      return {}
-    end,
-  },
-
-  {
     "hrsh7th/nvim-cmp",
-    ---@param opts cmp.ConfigSchema
     opts = function(_, opts)
       local luasnip = require("luasnip")
       local cmp = require("cmp")
@@ -406,7 +301,7 @@ return {
       items = {
         new_section("Find file",    "Telescope find_files", "Telescope"),
         new_section("Recent files", "Telescope oldfiles",   "Telescope"),
-        new_section("Open Session", "Telescope persisted", "Telescope"),
+        new_section("Open Session", "Telescope qwwprojections","Telescope"),
         new_section("Grep text",    "Telescope live_grep",  "Telescope"),
         new_section("init.lua",     "e $MYVIMRC",           "Config"),
         new_section("Lazy",         "Lazy",                 "Config"),
@@ -495,7 +390,6 @@ return {
 
   {
     "nvim-lualine/lualine.nvim",
-    event = "VeryLazy",
     opts = {
       sections = {
         lualine_b = { "branch" },
@@ -515,7 +409,7 @@ return {
       type = "default",
       fancy = {
         enable = true,
-        head = { cursor = "▷", texthl = "SmoothCursor", linehl = nil },
+        head = { cursor = "󰳗", texthl = "SmoothCursor", linehl = nil },
         body = {
           { cursor = "•", texthl = "SmoothCursorRed" },
           { cursor = "•", texthl = "SmoothCursorOrange" },
@@ -550,6 +444,7 @@ return {
       vim.keymap.set("n", "<Leader>th", ':TermExec cmd="pnpm dev --host" open=0<cr>', opts)
       vim.keymap.set("n", "<Leader>tb", ':TermExec cmd="pnpm build"<cr>', opts)
       vim.keymap.set("n", "<Leader>tp", ':TermExec cmd="pnpm preview" open=0<cr>', opts)
+      vim.keymap.set("n", "<Leader>tn", ':TermExec cmd="netlify dev" open=0<cr>', opts)
       return {
         open_mapping = [[<c-\>]],
         hide_numbers = true,
@@ -566,11 +461,291 @@ return {
   },
   {
     "axkirillov/hbac.nvim",
-    event = "VeryLazy",
+    event = "BufRead",
     dependencies = {
       "nvim-telescope/telescope.nvim",
       "nvim-lua/plenary.nvim",
       "nvim-tree/nvim-web-devicons",
     },
+    config = true,
+  },
+
+  {
+    "LazyVim/LazyVim",
+    opts = {
+      colorscheme = "ayu",
+    },
+  },
+  {
+    "xiyaowong/nvim-transparent",
+    event = "VimEnter",
+  },
+  {
+    "uga-rosa/ccc.nvim",
+    keys = {
+      {
+        "<leader>cc",
+        ":CccPick<CR>",
+        { desc = "CCC Color Picker" },
+      },
+      {
+        "<leader>cv",
+        ":CccConvert<CR>",
+        { desc = "CCD Color Converter" },
+      },
+    },
+    opts = {
+      highlighter = {
+        enabled = true,
+        lsp = true,
+      },
+      recognize = {
+        input = true,
+      },
+    },
+  },
+
+  {
+    "nvim-treesitter/nvim-treesitter",
+    opts = function(_, opts)
+      vim.list_extend(opts.ensure_installed, {
+        "tsx",
+        "typescript",
+        "html",
+        "svelte",
+        "astro",
+        "css",
+        "json",
+        "markdown",
+        "markdown_inline",
+        "vue",
+      })
+    end,
+  },
+
+  {
+    "williamboman/mason.nvim",
+    opts = {
+      ensure_installed = {
+        "svelte-language-server",
+        "shellcheck",
+        "astro-language-server",
+        "css-lsp",
+        "html-lsp",
+        "json-lsp",
+        "lua-language-server",
+        "prettierd",
+        "eslint_d",
+        "shfmt",
+        "stylua",
+        "typescript-language-server",
+        "unocss-language-server",
+        "vue-language-server",
+      },
+    },
+  },
+
+  {
+    "letieu/hacker.nvim",
+    cmd = "HackFollow",
+    keys = {
+      {
+        "<leader>h",
+        ":HackFollow<CR>",
+        { noremap = true, desc = "Hacker" },
+      },
+    },
+  },
+
+  {
+    "eandrju/cellular-automaton.nvim",
+    keys = {
+      {
+        "n",
+        "<leader><cr>",
+        ":CellularAutomaton make_it_rain<CR>",
+        { desc = "Make it rain!", noremap = true, silent = true },
+      },
+    },
+  },
+
+  {
+    "echasnovski/mini.indentscope",
+    opts = {
+      draw = {
+        animation = require("mini.indentscope").gen_animation.linear({ duration = 30, unit = "total" }),
+      },
+    },
+  },
+  {
+    "chrisgrieser/nvim-genghis",
+    dependencies = "stevearc/dressing.nvim",
+    keys = function()
+      local genghis = require("genghis")
+      return {
+        {
+          "<leader>yp",
+          genghis.copyFilepath,
+          desc = "Copy Filepath",
+        },
+        {
+          "<leader>yn",
+          genghis.copyFilename,
+          desc = "Copy Filename",
+        },
+        {
+          "<leader>rf",
+          genghis.renameFile,
+          desc = "Rename File",
+        },
+        {
+          "<leader>mf",
+          genghis.moveAndRenameFile,
+          desc = "Move And Rename File",
+        },
+        {
+          "<leader>nf",
+          genghis.createNewFile,
+          desc = "Create New File",
+        },
+        {
+          "<leader>yf",
+          genghis.duplicateFile,
+          desc = "Duplicate File",
+        },
+      }
+    end,
+  },
+
+  {
+    "max397574/better-escape.nvim",
+    keys = {
+      "jk",
+      "kj",
+    },
+    opts = {
+      mapping = {
+        "jk",
+        "kj",
+      },
+    },
+  },
+
+  {
+    "jghauser/kitty-runner.nvim",
+    cmd = "KittyOpenRunner",
+    config = true,
+  },
+
+  {
+    "samodostal/image.nvim",
+    opts = {
+      render = {
+        min_padding = 5,
+        show_label = true,
+        show_image_dimensions = true,
+        use_dither = true,
+        foreground_color = true,
+        background_color = true,
+      },
+      events = {
+        update_on_nvim_resize = true,
+      },
+    },
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "m00qek/baleia.nvim",
+    },
+  },
+
+  {
+    "chrisgrieser/nvim-recorder",
+    keys = {
+      "q",
+      "Q",
+    },
+  },
+
+  {
+    "nvim-tree/nvim-web-devicons",
+    config = function()
+      require("nvim-web-devicons").set_icon({
+        astro = {
+          icon = "",
+          color = "#ff5d01",
+          name = "astro",
+        },
+      })
+    end,
+  },
+
+  {
+    "tzachar/highlight-undo.nvim",
+    keys = {
+      "u",
+      "<C-r>",
+    },
+    opts = {
+      hlgroup = "HighlightUndo",
+      duration = 300,
+      keymaps = {
+        { "n", "u", "undo", {} },
+        { "n", "<C-r>", "redo", {} },
+      },
+    },
+  },
+
+  {
+    "debugloop/telescope-undo.nvim",
+    keys = {
+      "<leader>su",
+    },
+    config = function()
+      require("telescope").load_extension("undo")
+      vim.keymap.set("n", "<leader>su", ":Telescope undo<cr>", { desc = "Undo" })
+    end,
+  },
+
+  {
+    "axelvc/template-string.nvim",
+    event = "InsertEnter",
+    opts = {
+      filetypes = {
+        "html",
+        "typescript",
+        "javascript",
+        "typescriptreact",
+        "javascriptreact",
+        "python",
+        "astro",
+        "vue",
+        "svelte",
+      },
+      jsx_brackets = true,
+      remove_template_string = true,
+    },
+  },
+
+  { "echasnovski/mini.operators", config = true },
+
+  {
+    "roobert/tabtree.nvim",
+    config = true,
+  },
+
+  {
+    "piersolenski/telescope-import.nvim",
+    keys = {
+      {
+
+        "<leader>im",
+        ":Telescope import<cr>",
+        desc = "Import",
+      },
+    },
+    dependencies = "nvim-telescope/telescope.nvim",
+    config = function()
+      require("telescope").load_extension("import")
+    end,
   },
 }
