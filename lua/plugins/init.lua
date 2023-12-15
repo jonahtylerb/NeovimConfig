@@ -12,54 +12,10 @@ return {
     dependencies = "CantoroMC/ayu-nvim",
     event = "VeryLazy",
     opts = function()
-      local colors = {
-        blue = "#36a3d9",
-        green = "#b8cc52",
-        orange = "#ff7733",
-        yellow = "#e7c547",
-      }
-      return {
-        highlights = {
-          modes = {
-            ["n"] = {
-              foreground = colors.green,
-            },
-            ["i"] = {
-              foreground = colors.blue,
-            },
-            ["v"] = {
-              foreground = colors.yellow,
-            },
-            ["V"] = {
-              foreground = colors.yellow,
-            },
-            ["�"] = {
-              foreground = colors.yellow,
-            },
-            ["s"] = {
-              foreground = colors.yellow,
-            },
-            ["S"] = {
-              foreground = colors.yellow,
-            },
-            ["R"] = {
-              foreground = colors.orange,
-            },
-            ["c"] = {
-              foreground = colors.orange,
-            },
-          },
-        },
-      }
+      vim.o.cursorline = true
+      vim.o.number = true
+      return {}
     end,
-  },
-
-  {
-    "chrisgrieser/nvim-various-textobjs",
-    event = "BufRead",
-    opts = {
-      useDefaultKeymaps = true,
-    },
   },
 
   {
@@ -75,23 +31,10 @@ return {
   {
     "ckolkey/ts-node-action",
     dependencies = { "nvim-treesitter" },
-    keys = "T",
+    keys = "<leader>T",
     config = function()
-      vim.keymap.set("n", "T", require("ts-node-action").node_action, { desc = "Toggle ts-node-action" })
+      vim.keymap.set("n", "<leader>T", require("ts-node-action").node_action, { desc = "Toggle ts-node-action" })
     end,
-  },
-
-  {
-    "chentoast/marks.nvim",
-    event = "VeryLazy",
-    opts = {
-      default_mappings = true,
-      builtin_marks = { ".", "<", ">", "^" },
-      cyclic = true,
-      force_write_shada = false,
-      refresh_interval = 250,
-      sign_priority = { lower = 1000, upper = 1005, builtin = 1008, bookmark = 1020 },
-    },
   },
 
   {
@@ -198,35 +141,80 @@ return {
   { "echasnovski/mini.pairs", enabled = false },
 
   {
-    "echasnovski/mini.splitjoin",
-    keys = "gS",
-    config = true,
-  },
-
-  {
     "altermo/ultimate-autopair.nvim",
     event = { "InsertEnter", "CmdlineEnter" },
     branch = "v0.6",
-    opts = {
-      --TODO:
-      --Config goes here
-    },
-  },
-  {
-    "windwp/nvim-ts-autotag",
-    event = "InsertEnter",
-    config = true,
+    opts = {},
   },
 
   {
     "L3MON4D3/LuaSnip",
-    keys = {},
+    keys = function()
+      require("luasnip.loaders.from_vscode").lazy_load({
+        paths = {
+          "./snippets/snippet.json",
+          "./snippets/context.jsx.json",
+          "./snippets/context.tsx.json",
+          "./snippets/JSX.jsx.tsx.json",
+          "./snippets/reactivity.json",
+        },
+      })
+      return {}
+    end,
+  },
+
+  {
+    "Dhanus3133/LeetBuddy.nvim",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "nvim-telescope/telescope.nvim",
+    },
+    config = function()
+      require("leetbuddy").setup({
+        language = "ts",
+      })
+    end,
+    keys = {
+      { "<leader>lq", "<cmd>LBQuestions<cr>", desc = "List Questions" },
+      { "<leader>ll", "<cmd>LBQuestion<cr>", desc = "View Question" },
+      { "<leader>lr", "<cmd>LBReset<cr>", desc = "Reset Code" },
+      { "<leader>lt", "<cmd>LBTest<cr>", desc = "Run Code" },
+      { "<leader>ls", "<cmd>LBSubmit<cr>", desc = "Submit Code" },
+    },
+  },
+
+  {
+    "stevearc/conform.nvim",
+    opts = function()
+      local slow_format_filetypes = {}
+      require("conform").setup({
+        format_on_save = function(bufnr)
+          if slow_format_filetypes[vim.bo[bufnr].filetype] then
+            return
+          end
+          local function on_format(err)
+            if err and err:match("timeout$") then
+              slow_format_filetypes[vim.bo[bufnr].filetype] = true
+            end
+          end
+
+          return { timeout_ms = 200, lsp_fallback = true }, on_format
+        end,
+
+        format_after_save = function(bufnr)
+          if not slow_format_filetypes[vim.bo[bufnr].filetype] then
+            return
+          end
+          return { lsp_fallback = true }
+        end,
+      })
+    end,
   },
 
   {
     "hrsh7th/nvim-cmp",
+    dependencies = { "jcha0713/cmp-tw2css" },
     opts = function(_, opts)
-      local luasnip = require("luasnip")
       local cmp = require("cmp")
 
       opts.window = {
@@ -244,26 +232,7 @@ return {
         end,
       }
 
-      opts.mapping = vim.tbl_extend("force", opts.mapping, {
-        ["<down>"] = cmp.mapping(function(fallback)
-          if cmp.visible() then
-            cmp.select_next_item()
-          elseif luasnip.expand_or_jumpable() then
-            luasnip.expand_or_jump()
-          else
-            fallback()
-          end
-        end, { "i", "s" }),
-        ["<up>"] = cmp.mapping(function(fallback)
-          if cmp.visible() then
-            cmp.select_prev_item()
-          elseif luasnip.jumpable(-1) then
-            luasnip.jump(-1)
-          else
-            fallback()
-          end
-        end, { "i", "s" }),
-      })
+      opts.sources = cmp.config.sources(vim.list_extend(opts.sources, { { name = "cmp-tw2css" } }))
     end,
   },
 
@@ -333,46 +302,6 @@ return {
       })
     end,
   },
-  {
-    "nvim-neo-tree/neo-tree.nvim",
-    opts = {
-      filesystem = {
-        bind_to_cwd = false,
-        follow_current_file = true,
-        use_libuv_file_watcher = true,
-        hide_gitignored = true,
-        hide_by_name = {
-          "node_modules",
-        },
-      },
-      window = {
-        mappings = {
-          ["<space>"] = "none",
-        },
-      },
-      default_component_configs = {
-        indent = {
-          with_expanders = true,
-          expander_collapsed = "",
-          expander_expanded = "",
-          expander_highlight = "NeoTreeExpander",
-        },
-        symbols = {
-          -- Change type
-          added = "✚",
-          deleted = "󰧧",
-          modified = "󰙏",
-          renamed = "󱇨",
-          -- Status type
-          untracked = "",
-          ignored = "",
-          unstaged = "",
-          staged = "",
-          conflict = "",
-        },
-      },
-    },
-  },
 
   {
     "nvim-lualine/lualine.nvim",
@@ -395,7 +324,7 @@ return {
       type = "default",
       fancy = {
         enable = true,
-        head = { cursor = "󰳗", texthl = "SmoothCursor", linehl = nil },
+        head = { cursor = ">", texthl = "SmoothCursor", linehl = nil },
         body = {
           { cursor = "•", texthl = "SmoothCursorRed" },
           { cursor = "•", texthl = "SmoothCursorOrange" },
@@ -414,22 +343,14 @@ return {
   },
 
   {
-    "jose-elias-alvarez/null-ls.nvim",
-    opts = function(_, opts)
-      local nls = require("null-ls")
-      table.insert(opts.sources, nls.builtins.formatting.prettierd)
-    end,
-  },
-
-  {
     "akinsho/toggleterm.nvim",
     event = "VeryLazy",
     opts = function()
       local opts = { noremap = true, silent = true }
-      vim.keymap.set("n", "<Leader>td", ':TermExec cmd="pnpm dev" open=0<cr>', opts)
-      vim.keymap.set("n", "<Leader>th", ':TermExec cmd="pnpm dev --host" open=0<cr>', opts)
-      vim.keymap.set("n", "<Leader>tb", ':TermExec cmd="pnpm build"<cr>', opts)
-      vim.keymap.set("n", "<Leader>tp", ':TermExec cmd="pnpm preview" open=0<cr>', opts)
+      vim.keymap.set("n", "<Leader>td", ':TermExec cmd="bun dev" open=0<cr>', opts)
+      vim.keymap.set("n", "<Leader>th", ':TermExec cmd="bun dev --host" open=0<cr>', opts)
+      vim.keymap.set("n", "<Leader>tb", ':TermExec cmd="bun build"<cr>', opts)
+      vim.keymap.set("n", "<Leader>tp", ':TermExec cmd="bun preview" open=0<cr>', opts)
       vim.keymap.set("n", "<Leader>tn", ':TermExec cmd="netlify dev" open=0<cr>', opts)
       return {
         open_mapping = [[<c-\>]],
@@ -445,16 +366,6 @@ return {
       }
     end,
   },
-  {
-    "axkirillov/hbac.nvim",
-    event = "BufRead",
-    dependencies = {
-      "nvim-telescope/telescope.nvim",
-      "nvim-lua/plenary.nvim",
-      "nvim-tree/nvim-web-devicons",
-    },
-    config = true,
-  },
 
   {
     "LazyVim/LazyVim",
@@ -464,11 +375,14 @@ return {
   },
   {
     "xiyaowong/nvim-transparent",
+    lazy = false,
+    priority = 1000,
     event = "VimEnter",
   },
 
   {
     "uga-rosa/ccc.nvim",
+    event = "BufReadPre",
     keys = {
       {
         "<leader>cc",
@@ -483,7 +397,7 @@ return {
     },
     opts = {
       highlighter = {
-        enabled = true,
+        auto_enable = true,
         lsp = true,
       },
       recognize = {
@@ -644,10 +558,25 @@ return {
 
   {
     "chrisgrieser/nvim-recorder",
+    dependencies = "rcarriga/nvim-notify",
     keys = {
-      "q",
-      "Q",
+      { "q", desc = " Start Recording" },
+      { "Q", desc = " Play Recording" },
     },
+    opts = {},
+    config = function()
+      local lualineZ = require("lualine").get_config().sections.lualine_z or {}
+      local lualineY = require("lualine").get_config().sections.lualine_y or {}
+      table.insert(lualineZ, { require("recorder").recordingStatus })
+      table.insert(lualineY, { require("recorder").displaySlots })
+
+      require("lualine").setup({
+        tabline = {
+          lualine_y = lualineY,
+          lualine_z = lualineZ,
+        },
+      })
+    end,
   },
 
   {
@@ -737,35 +666,38 @@ return {
       require("telescope").load_extension("projects")
     end,
     keys = {
-      { "<leader>fp", "<Cmd>Telescope projects<CR>", desc = "Projects" },
+      { "<leader>sp", "<Cmd>Telescope projects<CR>", desc = "Projects" },
     },
   },
 
+  -- {
+  --   "Exafunction/codeium.vim",
+  --   keys = {
+  --     { "<Tab>", vim.fn["codeium#Accept"] },
+  --   },
+  --   event = "VeryLazy",
+  --   config = function()
+  --     vim.keymap.set("i", "<Tab>", vim.fn["codeium#Accept"], { expr = true })
+  --     vim.keymap.set("i", "<c-down>", function()
+  --       return vim.fn["codeium#CycleCompletions"](1)
+  --     end, { expr = true })
+  --     vim.keymap.set("i", "<c-up>", function()
+  --       return vim.fn["codeium#CycleCompletions"](-1)
+  --     end, { expr = true })
+  --     vim.keymap.set("i", "<c-x>", function()
+  --       return vim.fn["codeium#Clear"]()
+  --     end, { expr = true })
+  --   end,
+  -- },
+
   {
-    "roobert/tabtree.nvim",
-    config = function()
-      require("tabtree").setup()
-    end,
+    "lewis6991/satellite.nvim",
     event = "VeryLazy",
   },
 
   {
-    "Exafunction/codeium.vim",
+    "sontungexpt/buffer-closer",
     event = "VeryLazy",
-    keys = {
-      "<Tab>",
-    },
-    config = function()
-      vim.keymap.set("i", "<Tab>", vim.fn["codeium#Accept"], { expr = true })
-      vim.keymap.set("i", "<c-down>", function()
-        return vim.fn["codeium#CycleCompletions"](1)
-      end, { expr = true })
-      vim.keymap.set("i", "<c-up>", function()
-        return vim.fn["codeium#CycleCompletions"](-1)
-      end, { expr = true })
-      vim.keymap.set("i", "<c-x>", function()
-        return vim.fn["codeium#Clear"]()
-      end, { expr = true })
-    end,
+    config = true,
   },
 }
