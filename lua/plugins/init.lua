@@ -491,32 +491,22 @@ return {
       local genghis = require("genghis")
       return {
         {
-          "<leader>yp",
-          genghis.copyFilepath,
-          desc = "Copy Filepath",
-        },
-        {
-          "<leader>yn",
-          genghis.copyFilename,
-          desc = "Copy Filename",
-        },
-        {
-          "<leader>rf",
+          "<leader>fr",
           genghis.renameFile,
           desc = "Rename File",
         },
         {
-          "<leader>mf",
+          "<leader>fm",
           genghis.moveAndRenameFile,
           desc = "Move And Rename File",
         },
         {
-          "<leader>nf",
+          "<leader>fn",
           genghis.createNewFile,
           desc = "Create New File",
         },
         {
-          "<leader>yf",
+          "<leader>fp",
           genghis.duplicateFile,
           desc = "Duplicate File",
         },
@@ -561,29 +551,6 @@ return {
       "nvim-lua/plenary.nvim",
       "m00qek/baleia.nvim",
     },
-  },
-
-  {
-    "chrisgrieser/nvim-recorder",
-    dependencies = "rcarriga/nvim-notify",
-    keys = {
-      { "q", desc = " Start Recording" },
-      { "Q", desc = " Play Recording" },
-    },
-    opts = {},
-    config = function()
-      local lualineZ = require("lualine").get_config().sections.lualine_z or {}
-      local lualineY = require("lualine").get_config().sections.lualine_y or {}
-      table.insert(lualineZ, { require("recorder").recordingStatus })
-      table.insert(lualineY, { require("recorder").displaySlots })
-
-      require("lualine").setup({
-        tabline = {
-          lualine_y = lualineY,
-          lualine_z = lualineZ,
-        },
-      })
-    end,
   },
 
   {
@@ -653,7 +620,7 @@ return {
     keys = {
       {
 
-        "<leader>im",
+        "<leader>si",
         ":Telescope import<cr>",
         desc = "Import",
       },
@@ -677,26 +644,6 @@ return {
     },
   },
 
-  -- {
-  --   "Exafunction/codeium.vim",
-  --   keys = {
-  --     { "<Tab>", vim.fn["codeium#Accept"] },
-  --   },
-  --   event = "VeryLazy",
-  --   config = function()
-  --     vim.keymap.set("i", "<Tab>", vim.fn["codeium#Accept"], { expr = true })
-  --     vim.keymap.set("i", "<c-down>", function()
-  --       return vim.fn["codeium#CycleCompletions"](1)
-  --     end, { expr = true })
-  --     vim.keymap.set("i", "<c-up>", function()
-  --       return vim.fn["codeium#CycleCompletions"](-1)
-  --     end, { expr = true })
-  --     vim.keymap.set("i", "<c-x>", function()
-  --       return vim.fn["codeium#Clear"]()
-  --     end, { expr = true })
-  --   end,
-  -- },
-
   {
     "lewis6991/satellite.nvim",
     event = "VeryLazy",
@@ -706,5 +653,38 @@ return {
     "sontungexpt/buffer-closer",
     event = "VeryLazy",
     config = true,
+  },
+  {
+    "https://git.sr.ht/~swaits/thethethe.nvim",
+    lazy = true,
+    event = "VeryLazy",
+    opts = {},
+  },
+  {
+    "fredeeb/tardis.nvim",
+    dependencies = { "nvim-lua/plenary.nvim" },
+    config = true,
+    cmd = "Tardis",
+  },
+  {
+    "NStefan002/visual-surround.nvim",
+    event = "VeryLazy",
+    config = function()
+      require("visual-surround").setup({})
+    end,
+  },
+
+  {
+    "S1M0N38/love2d.nvim",
+    cmd = "LoveRun",
+    opts = {
+      path_to_love_bin = "/usr/bin/love",
+      restart_on_save = true,
+    },
+    keys = {
+      { "<leader>v", desc = "LÖVE" },
+      { "<leader>vv", "<cmd>LoveRun<cr>", desc = "Run LÖVE" },
+      { "<leader>vs", "<cmd>LoveStop<cr>", desc = "Stop LÖVE" },
+    },
   },
 }
